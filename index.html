@@ -140,6 +140,27 @@ button{font:inherit;color:inherit;cursor:pointer}
 .conf{position:fixed;top:-40px;font-size:26px;z-index:9;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
 
+/* ---------- awatar / szafa ---------- */
+.av svg{width:40px;height:60px;margin-top:-10px}
+.hero{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.14);border-radius:22px;padding:10px 12px;margin-top:14px;color:#fff}
+.hero .fig{flex:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+.hero .txt{flex:1;font-weight:800;font-size:14px;line-height:1.35}
+.hero .txt b{color:var(--gold)}
+.hero button{border:0;border-radius:16px;padding:12px 14px;font-weight:900;font-size:16px;background:#fff;color:var(--wc2);box-shadow:0 5px 0 rgba(0,0,0,.2);position:relative}
+.hero button .badge{position:absolute;top:-8px;right:-8px;background:#e11d48;color:#fff;border-radius:999px;font-size:12px;padding:3px 7px;animation:pop .4s}
+.wardrobe{display:grid;grid-template-columns:150px 1fr;gap:12px;margin-top:14px}
+.wardrobe .stage2{background:rgba(255,255,255,.14);border-radius:22px;padding:8px;display:grid;place-items:center}
+.wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.witem{background:#fff;border-radius:16px;padding:4px 4px 6px;text-align:center;border:3px solid transparent;box-shadow:0 4px 0 rgba(0,0,0,.18);position:relative}
+.witem.on{border-color:var(--gold)}
+.witem.lock{background:rgba(255,255,255,.3);box-shadow:none}
+.witem.lock svg{opacity:.85}
+.witem .nm{font-size:12px;font-weight:900;color:var(--ink);margin-top:2px;line-height:1.1}
+.witem.lock .nm{color:#fff}
+.witem .gift{position:absolute;top:4px;right:6px;font-size:18px;animation:pop .5s}
+.witem svg{width:64px;height:96px;margin:-10px auto -18px}
+@media (max-width:560px){.wardrobe{grid-template-columns:1fr}.wardrobe .stage2{padding:6px}.wardrobe .stage2 svg{width:110px;height:165px}}
+
 /* ---------- result / album / parent ---------- */
 .result{text-align:center;color:#fff;padding:40px 16px}
 .result .rs{font-size:60px;letter-spacing:4px;margin:10px 0}
@@ -166,7 +187,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 <body>
 <div class="sky" id="sky"></div>
 <div id="app"></div>
-<script src="czytanka-dane.js?v=10"></script>
+<script src="czytanka-dane.js?v=11"></script>
+<script src="czytanka-awatar.js?v=1"></script>
 <script>
 /* ================= narzędzia ================= */
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -179,7 +201,7 @@ const plain=plainWord;
 
 /* ================= zapis postępów ================= */
 const KEY='czytankaMatylda_v1';
-const S={stars:{},runs:{},solved:0,sound:true,upper:true,avatar:'👸',words:{},voice:'',unlockAll:false,stickersSeen:0,log:[],tts:'system',ttsKey:'',ttsVoice:''};
+const S={stars:{},runs:{},solved:0,wardrobe:['sukienka','suknia','bluzka','spodnie','kapelusz','czapka'],outfit:{top:'sukienka'},pendingGift:null,unlockTries:0,sound:true,upper:true,avatar:'👸',words:{},voice:'',unlockAll:false,stickersSeen:0,log:[],tts:'system',ttsKey:'',ttsVoice:''};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
@@ -371,7 +393,7 @@ const lessonText=w=>w.lesson.replace(/<[^>]+>/g,'').replace(/-/g,'');
 let run=null;
 function totalStars(){return Object.values(S.stars).reduce((a,b)=>a+b,0)}
 function topBar(){
-  return `<div class="top"><div class="av">${S.avatar}</div><div class="hello">Matylda</div>
+  return `<div class="top"><div class="av" onclick="wardrobe()" style="overflow:hidden;cursor:pointer">${avatarSvg(S.outfit,40)}</div><div class="hello">Matylda</div>
    <div class="pill">⭐ ${totalStars()}</div>
    <button class="iconbtn" title="Naklejki" onclick="album()">🎀</button>
    <button class="iconbtn" title="Duże / małe litery" onclick="S.upper=!S.upper;save();sTap();home()">${S.upper?'AB':'ab'}</button>
@@ -385,6 +407,7 @@ function home(){
   app.innerHTML=`<div class="home">${topBar()}
    <div class="logo"><h1>Czytanka <span>Matyldy</span></h1><p>Królestwo Liter — czytaj i zbieraj gwiazdki!</p></div>
    <div class="bubble"><div class="m">🧚</div><div>${g}</div><button class="say" onclick="speak(GREETS[${gi}])">🔊</button></div>
+   <div class="hero"><div class="fig">${avatarSvg(S.outfit,70)}</div><div class="txt">${S.pendingGift?'🎁 Masz <b>nowy dodatek</b>! Ułóż jego nazwę, żeby go odblokować.':`Masz <b>${S.wardrobe.length}</b> ${S.wardrobe.length===1?'rzecz':S.wardrobe.length<5?'rzeczy':'rzeczy'} w szafie. Każda misja z gwiazdką to nowy dodatek.`}</div><button onclick="${S.pendingGift?'unlockScreen()':'wardrobe()'}">${S.pendingGift?'🎁 Odbierz':'👗 Szafa'}${S.pendingGift?'<span class="badge">1</span>':''}</button></div>
    <div class="worlds">${WORLDS.map(w=>{const lock=isLocked(w);
      return `<button class="wcard ${w.boss?'boss':''} ${lock?'locked':''}" style="--wc:${w.c1};--wc2:${w.c2}" onclick="openWorld('${w.id}')">
       <div class="we">${w.emoji}</div><div><div class="wn">${w.name}</div><div class="wt">${w.tag}</div><div class="wst">${starStr(S.stars[w.id]||0)}</div></div>${lock?'<span class="lock">🔒</span>':''}</button>`}).join('')}</div>
@@ -507,7 +530,7 @@ function startRun(id){
   renderTask();
 }
 function track(){
-  return `<div class="track">${run.tasks.map((t,i)=>`<div class="blk ${run.res[i]===true?'done':run.res[i]===false?'miss':i===run.i?'cur':''}">${i===run.i?`<span class="me">${S.avatar}</span>`:''}</div>`).join('')}<span class="flag">🏰</span></div>`;
+  return `<div class="track">${run.tasks.map((t,i)=>`<div class="blk ${run.res[i]===true?'done':run.res[i]===false?'miss':i===run.i?'cur':''}">${i===run.i?`<span class="me" style="bottom:7px">${avatarSvg(S.outfit,22)}</span>`:''}</div>`).join('')}<span class="flag">🏰</span></div>`;
 }
 function renderTask(){
   const t=run.tasks[run.i];const w=run.w;run.tries=0;run.hinted=false;run.busy=false;
@@ -637,6 +660,7 @@ function finish(){
   const stars=first>=n-1?3:first>=n-3?2:good>=3?1:0;
   const prev=S.stars[run.w.id]||0;if(stars>prev)S.stars[run.w.id]=stars;
   S.runs=S.runs||{};S.runs[run.w.id]=(S.runs[run.w.id]||0)+1;
+  let gift=false;if(stars>=1&&!S.pendingGift){const nxt=ITEMS.find(it=>!S.wardrobe.includes(it.id));if(nxt){S.pendingGift=nxt.id;S.unlockTries=0;gift=true}}
   save();
   const nowSt=stickersOwned(totalStars());const newSt=nowSt-S.stickersSeen;
   if(stars>=1){sWin();confetti()}else sBad();
@@ -644,10 +668,71 @@ function finish(){
   app.innerHTML=`<div class="result"><div style="font-size:70px">${stars>=1?'🏆':'🧚'}</div><div class="rs">${starStr(stars)}</div>
     <h2>${stars>=1?SAY.bravo:SAY.almostEnd}</h2><p>${good} z ${n} zadań 💪<br>${msg}</p>
     ${newSt>0?`<p>🎀 Masz ${newSt===1?'nową naklejkę':newSt+' nowe naklejki'} w albumie!</p>`:''}
-    <button class="bigbtn" onclick="startRun('${run.w.id}')">Jeszcze raz! 🔁 <small style="font-weight:800;opacity:.75">zestaw ${setOf(run.w.id)+1} z ${SETS}</small></button>
+    ${gift?`<button class="bigbtn" onclick="unlockScreen()">🎁 Nowy dodatek! Odbierz</button>`:''}
+    <button class="bigbtn ${gift?'alt':''}" onclick="startRun('${run.w.id}')">Jeszcze raz! 🔁 <small style="font-weight:800;opacity:.75">zestaw ${setOf(run.w.id)+1} z ${SETS}</small></button>
     ${newSt>0?`<button class="bigbtn alt" onclick="album()">Zobacz album 🎀</button>`:''}
     <button class="bigbtn alt" onclick="home()">← Mapa</button></div>`;
-  speak(stars>=1?SAY.bravo:SAY.almostEnd,msg);
+  speak(stars>=1?SAY.bravo:SAY.almostEnd,msg,gift?SAY.newGift:null);
+}
+
+/* ================= szafa i dodatki ================= */
+const itemOf=id=>ITEMS.find(it=>it.id===id);
+const itemName=id=>plain(itemOf(id).syl);
+function wear(id){
+  const it=itemOf(id);if(!S.wardrobe.includes(id))return;const slot=it.slot;sTap();
+  if(S.outfit[slot]===id)S.outfit[slot]=null;else S.outfit[slot]=id;
+  if(slot==='top'&&!S.outfit.top)S.outfit.top=null;
+  save();wardrobe(false);speak(U('word',it.syl));
+}
+function wardrobe(say=true){
+  stopSpeak();
+  const slotName={top:'Góra',bottom:'Dół',head:'Na głowę',face:'Okulary',neck:'Na szyję',feet:'Buty',hand:'Do ręki',back:'Na plecy',pet:'Przyjaciel'};
+  const owned=ITEMS.filter(it=>S.wardrobe.includes(it.id)),locked=ITEMS.filter(it=>!S.wardrobe.includes(it.id));
+  const tile=it=>{const on=S.outfit[it.slot]===it.id;return `<div class="witem ${on?'on':''}" onclick="wear('${it.id}')">${itemPreviewSvg(it.id,64)}<div class="nm">${disp(itemName(it.id))}</div></div>`};
+  const ltile=it=>`<div class="witem lock" onclick="${S.pendingGift===it.id?'unlockScreen()':'sTap()'}">${S.pendingGift===it.id?'<span class="gift">🎁</span>':''}${itemPreviewSvg(it.id,64)}<div class="nm">${S.pendingGift===it.id?'ułóż nazwę':'🔒'}</div></div>`;
+  app.innerHTML=`<div class="home">${topBar()}<div class="logo"><h1>Szafa <span>Matyldy</span></h1><p>Dotknij ubranka, żeby je założyć lub zdjąć.</p></div>
+   <div class="wardrobe"><div class="stage2">${avatarSvg(S.outfit,130)}</div>
+   <div><div class="wgrid">${owned.map(tile).join('')}${locked.map(ltile).join('')}</div></div></div>
+   <div class="foot">Masz ${owned.length} z ${ITEMS.length} rzeczy. ${locked.length?'Każda misja z gwiazdką ⭐ daje nowy dodatek, a nazwę trzeba ułożyć z liter.':'Masz wszystko! 👑'}</div>
+   <button class="bigbtn alt" style="margin-top:12px" onclick="home()">← Wróć na mapę</button></div>`;
+  if(say)speak(SAY.wardrobe);
+}
+/* odblokowanie: ułóż nazwę (samogłoski, gdy mało gwiazdek; całe słowo później) */
+let unl=null;
+function unlockScreen(){
+  const id=S.pendingGift;if(!id){home();return}const it=itemOf(id);const name=itemName(id);
+  const full=totalStars()>=6;const letters=name.split('');
+  const blanks=letters.map((ch,i)=>full||VOW.includes(ch.toUpperCase())||['Ó','Ą','Ę'].includes(ch.toUpperCase()));
+  const need=letters.filter((ch,i)=>blanks[i]);
+  const distr=shuffle((full?Object.keys(LETTERS):['A','O','E','I','U','Y']).map(l=>l.toLowerCase()).filter(l=>!need.includes(l))).slice(0,2);
+  unl={id,name,letters,blanks,full,filled:[],tiles:shuffle([...need,...distr]),busy:false};
+  renderUnlock();speak(full?SAY.buildName:SAY.fillVowels,U('word',it.syl));
+}
+function renderUnlock(){
+  const u=unl;const slots=u.letters.map((ch,i)=>{if(!u.blanks[i])return `<div class="slot full" style="border-color:#e9d5ff;background:#faf5ff">${disp(ch)}</div>`;const k=u.blanks.slice(0,i).filter(Boolean).length;const v=u.filled[k];return `<div class="slot ${v?'full':''}" data-k="${k}">${v?disp(v):''}</div>`}).join('');
+  app.innerHTML=`<div class="play"><div class="ptop"><button class="iconbtn" onclick="home()">✕</button><div class="ptitle">🎁 Nowy dodatek</div><div class="pill">${S.wardrobe.length}/${ITEMS.length}</div></div>
+   <div class="stage"><div class="q"><div class="ask"><button onclick="speak(unl.full?SAY.buildName:SAY.fillVowels,U('word','${itemOf(u.id).syl}'))">🔊</button><span>${u.full?'Ułóż nazwę dodatku':'Wstaw brakujące samogłoski'}</span></div>
+   <div style="display:flex;justify-content:center;margin:6px 0 -8px">${itemPreviewSvg(u.id,110)}</div>
+   <div class="slots" id="slots">${slots}</div>
+   <div class="tiles">${u.tiles.map((t,i)=>`<button class="tile ${u.filled.includes('#'+i)?'used':''}" data-i="${i}" onclick="unlockTap(${i},this)">${disp(t)}</button>`).join('')}</div></div></div></div>`;
+}
+async function unlockTap(i,btn){
+  const u=unl;if(u.busy)return;sTap();btn.classList.add('used');u.filled.push(u.tiles[i]);u.usedIdx=(u.usedIdx||[]).concat(i);
+  const need=u.letters.filter((ch,k)=>u.blanks[k]);
+  const sl=document.querySelector(`.slot[data-k="${u.filled.length-1}"]`);if(sl){sl.textContent=disp(u.tiles[i]);sl.classList.add('full')}
+  if(u.filled.length<need.length)return;
+  u.busy=true;
+  if(u.filled.join('')===need.join('')){
+    S.wardrobe.push(u.id);S.outfit[itemOf(u.id).slot]=u.id;S.pendingGift=null;save();
+    sWin();confetti(['👗','✨','⭐','🎀','👑']);fb('Brawo! '+disp(u.name)+' 🎁','ok');
+    await speak(SAY.unlocked,U('word',itemOf(u.id).syl));wardrobe(false);
+  }else{
+    S.unlockTries=(S.unlockTries||0)+1;save();sBad();fb('Spróbuj jeszcze raz 🤔','bad');
+    const help=S.unlockTries>=2;
+    if(help){document.querySelectorAll('.slot[data-k]').forEach((el,k)=>{el.textContent=disp(need[k]);el.classList.add('full');el.style.background='#fef3c7'});await speak(SAY.again,U(itemOf(u.id).syl.includes('-')?'model':'word',itemOf(u.id).syl));await wait(1500)}
+    else await speak(SAY.again);
+    u.filled=[];u.busy=false;renderUnlock();
+  }
 }
 
 /* ================= album naklejek ================= */

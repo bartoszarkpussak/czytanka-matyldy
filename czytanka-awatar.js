@@ -1,0 +1,79 @@
+/* Czytanka Matyldy — awatar: dziewczynka z długimi białymi włosami + ubranka i dodatki (SVG, viewBox 0 0 200 300).
+   avatarSvg(outfit, size, opts) → string SVG. outfit = {top, bottom, head, face, neck, feet, hand, back, pet} (id dodatku lub null). */
+const AV={
+  skin:'#f7d9c4', skinD:'#e8bfa6', hair:'#f7f7fa', hairD:'#d9dae3', cheek:'#f9b4c0', mouth:'#c0392b', eye:'#3b2a4a',
+  tee:'#ffffff', legg:'#c9b8e8'
+};
+const AVP={ /* warstwy rysowane w tej kolejności */
+  back:{
+    skrzydla:`<g opacity=".95"><path d="M70 125 C20 95 20 175 68 175 Z" fill="#e8f4ff" stroke="#9fd0ff" stroke-width="2"/><path d="M130 125 C180 95 180 175 132 175 Z" fill="#e8f4ff" stroke="#9fd0ff" stroke-width="2"/><path d="M66 150 C40 140 38 170 68 168" fill="none" stroke="#bfe0ff" stroke-width="2"/><path d="M134 150 C160 140 162 170 132 168" fill="none" stroke="#bfe0ff" stroke-width="2"/></g>`,
+    peleryna:`<path d="M72 112 L48 235 L152 235 L128 112 Z" fill="#c0392b"/><path d="M72 112 L128 112 L124 130 L76 130 Z" fill="#e74c3c"/>`
+  },
+  hairBack:`<path d="M62 70 C46 110 50 170 58 215 L80 215 L78 150 L122 150 L120 215 L142 215 C150 170 154 110 138 70 Z" fill="${AV.hair}" stroke="${AV.hairD}" stroke-width="2"/>`,
+  legs:`<rect x="82" y="175" width="16" height="56" rx="7" fill="${AV.legg}"/><rect x="102" y="175" width="16" height="56" rx="7" fill="${AV.legg}"/>`,
+  feetBase:`<path d="M78 228 h22 v10 h-26 a5 5 0 0 1 0 -10 Z" fill="#8e7cc3"/><path d="M100 228 h22 a5 5 0 0 1 0 10 h-26 Z" fill="#8e7cc3"/>`,
+  feet:{
+    buty:`<path d="M76 212 h24 v26 h-28 a6 6 0 0 1 0 -12 h4 Z" fill="#d7263d"/><path d="M100 212 h24 v14 h4 a6 6 0 0 1 0 12 h-28 Z" fill="#d7263d"/><path d="M76 216 h24 M100 216 h24" stroke="#ff8fa3" stroke-width="3"/>`
+  },
+  bottom:{
+    spodnie:`<path d="M78 172 h44 v12 l-4 50 h-15 l-3 -40 l-3 40 h-15 l-4 -50 Z" fill="#3b6fd6"/><path d="M78 176 h44" stroke="#2b50a0" stroke-width="3"/>`,
+    spodnica:`<path d="M74 172 h52 l12 46 h-76 Z" fill="#9b59b6"/><path d="M74 172 h52" stroke="#7d3c98" stroke-width="4"/><path d="M80 190 l8 20 M100 190 l0 22 M120 190 l-8 20" stroke="#b07cc6" stroke-width="2"/>`
+  },
+  torsoBase:`<path d="M74 108 h52 v70 h-52 Z" fill="${AV.tee}" stroke="#e6e6ee" stroke-width="1.5"/>`,
+  top:{
+    sukienka:`<path d="M74 108 h52 l6 34 h-64 Z" fill="#ff5fa2"/><path d="M68 142 h64 l18 78 h-100 Z" fill="#ff7fb8"/><path d="M68 142 h64" stroke="#ff3d8f" stroke-width="4"/><g fill="#ffd6e7"><path d="M88 170 l5 -5 l5 5 l-5 7 Z"/><path d="M108 185 l5 -5 l5 5 l-5 7 Z"/><path d="M78 195 l5 -5 l5 5 l-5 7 Z"/></g>`,
+    suknia:`<path d="M74 108 h52 l6 34 h-64 Z" fill="#4f8ef7"/><path d="M68 142 h64 l26 110 h-116 Z" fill="#6fa3ff"/><path d="M68 142 h64" stroke="#2f6fe0" stroke-width="4"/><g fill="#ffffff"><circle cx="90" cy="175" r="2.5"/><circle cx="120" cy="190" r="2.5"/><circle cx="100" cy="215" r="2.5"/><circle cx="80" cy="235" r="2.5"/><circle cx="130" cy="230" r="2.5"/></g>`,
+    bluzka:`<path d="M74 108 h52 v66 h-52 Z" fill="#f9c846"/><path d="M58 110 l16 -2 v28 l-14 4 Z M142 110 l-16 -2 v28 l14 4 Z" fill="#f9c846"/><circle cx="100" cy="125" r="3" fill="#fff"/><circle cx="100" cy="140" r="3" fill="#fff"/><circle cx="100" cy="155" r="3" fill="#fff"/>`
+  },
+  arms:`<path d="M74 110 c-18 10 -22 40 -20 62 a7 7 0 0 0 14 0 c0 -18 4 -36 10 -46 Z" fill="${AV.skin}"/><path d="M126 110 c18 10 22 40 20 62 a7 7 0 0 1 -14 0 c0 -18 -4 -36 -10 -46 Z" fill="${AV.skin}"/>`,
+  neck:{
+    szalik:`<path d="M76 104 h48 v14 h-48 Z" fill="#e74c3c"/><path d="M104 116 h18 v40 h-18 Z" fill="#e74c3c"/><path d="M76 108 h48 M106 130 h14 M106 142 h14" stroke="#f9d4cf" stroke-width="3"/>`,
+    korale:`<path d="M80 106 q20 22 40 0" fill="none" stroke="#f06292" stroke-width="2"/><g fill="#f06292"><circle cx="84" cy="110" r="3"/><circle cx="91" cy="115" r="3"/><circle cx="100" cy="117" r="3.5"/><circle cx="109" cy="115" r="3"/><circle cx="116" cy="110" r="3"/></g>`
+  },
+  head:`<ellipse cx="100" cy="96" rx="9" ry="8" fill="${AV.skin}"/><circle cx="100" cy="68" r="34" fill="${AV.skin}"/><circle cx="84" cy="78" r="5" fill="${AV.cheek}" opacity=".7"/><circle cx="116" cy="78" r="5" fill="${AV.cheek}" opacity=".7"/><ellipse cx="88" cy="70" rx="3.4" ry="4.5" fill="${AV.eye}"/><ellipse cx="112" cy="70" rx="3.4" ry="4.5" fill="${AV.eye}"/><circle cx="89.5" cy="68" r="1.2" fill="#fff"/><circle cx="113.5" cy="68" r="1.2" fill="#fff"/><path d="M92 84 q8 7 16 0" fill="none" stroke="${AV.mouth}" stroke-width="2.2" stroke-linecap="round"/>`,
+  hairFront:`<path d="M66 64 C66 34 86 28 100 28 C114 28 134 34 134 64 C128 48 120 44 100 44 C80 44 72 48 66 64 Z" fill="${AV.hair}" stroke="${AV.hairD}" stroke-width="2"/><path d="M66 64 c-4 20 -2 44 2 60 l10 -2 c-4 -18 -4 -40 -2 -56 Z M134 64 c4 20 2 44 -2 60 l-10 -2 c4 -18 4 -40 2 -56 Z" fill="${AV.hair}" stroke="${AV.hairD}" stroke-width="2"/>`,
+  face:{
+    okulary:`<g fill="none" stroke="#2d3436" stroke-width="2.5"><circle cx="88" cy="70" r="9"/><circle cx="112" cy="70" r="9"/><path d="M97 70 h6 M79 68 l-8 -3 M121 68 l8 -3"/></g><circle cx="88" cy="70" r="7.5" fill="#9fd8ff" opacity=".35"/><circle cx="112" cy="70" r="7.5" fill="#9fd8ff" opacity=".35"/>`
+  },
+  headwear:{
+    kapelusz:`<ellipse cx="100" cy="44" rx="48" ry="9" fill="#f4a261"/><path d="M72 44 c0 -22 10 -30 28 -30 c18 0 28 8 28 30 Z" fill="#f4a261"/><path d="M72 40 h56" stroke="#e76f51" stroke-width="5"/>`,
+    czapka:`<path d="M64 60 c0 -26 16 -36 36 -36 c20 0 36 10 36 36 Z" fill="#e63946"/><path d="M64 58 h72 v10 h-72 Z" fill="#f1faee" stroke="#e63946" stroke-width="1"/><circle cx="100" cy="24" r="7" fill="#f1faee" stroke="#e63946" stroke-width="2"/>`,
+    korona:`<path d="M72 44 l8 -22 l12 14 l8 -20 l8 20 l12 -14 l8 22 Z" fill="#f6b40e" stroke="#d99a06" stroke-width="2"/><rect x="72" y="42" width="56" height="6" fill="#f6b40e" stroke="#d99a06" stroke-width="2"/><circle cx="100" cy="30" r="3" fill="#e63946"/><circle cx="84" cy="38" r="2.5" fill="#2ecc71"/><circle cx="116" cy="38" r="2.5" fill="#3498db"/>`,
+    kokarda:`<g transform="translate(130 40)"><path d="M0 0 l-14 -10 v20 Z M0 0 l14 -10 v20 Z" fill="#ff5fa2" stroke="#e0338a" stroke-width="2"/><circle cx="0" cy="0" r="4" fill="#ffd6e7" stroke="#e0338a" stroke-width="1.5"/></g>`,
+    kwiatek:`<g transform="translate(68 46)"><g fill="#ffb3c6"><circle cx="0" cy="-7" r="4.5"/><circle cx="7" cy="-2" r="4.5"/><circle cx="4" cy="6" r="4.5"/><circle cx="-4" cy="6" r="4.5"/><circle cx="-7" cy="-2" r="4.5"/></g><circle cx="0" cy="0" r="3.5" fill="#f6b40e"/></g>`
+  },
+  hand:{
+    torba:`<path d="M138 165 h26 v26 h-26 Z" fill="#8d5524" rx="3"/><path d="M143 165 c0 -10 16 -10 16 0" fill="none" stroke="#8d5524" stroke-width="3"/><circle cx="151" cy="178" r="2.5" fill="#f6b40e"/>`,
+    balon:`<path d="M146 172 q4 -20 4 -40" fill="none" stroke="#555" stroke-width="1.5"/><ellipse cx="152" cy="112" rx="16" ry="20" fill="#ff5fa2"/><path d="M152 132 l-3 5 h6 Z" fill="#ff5fa2"/><ellipse cx="146" cy="104" rx="4" ry="6" fill="#fff" opacity=".5"/>`,
+    rozdzka:`<path d="M146 172 l18 -40" stroke="#8e44ad" stroke-width="3" stroke-linecap="round"/><path d="M164 132 l3 -9 l3 9 l9 3 l-9 3 l-3 9 l-3 -9 l-9 -3 Z" fill="#f6b40e"/><circle cx="158" cy="120" r="1.5" fill="#f6b40e"/><circle cx="176" cy="126" r="1.5" fill="#f6b40e"/>`
+  },
+  pet:{
+    kotek:`<g transform="translate(150 200)"><ellipse cx="0" cy="22" rx="16" ry="12" fill="#f39c12"/><circle cx="-6" cy="8" r="11" fill="#f39c12"/><path d="M-14 2 l-2 -10 l8 5 Z M2 2 l2 -10 l-8 5 Z" fill="#f39c12"/><circle cx="-10" cy="7" r="1.5" fill="#2d3436"/><circle cx="-3" cy="7" r="1.5" fill="#2d3436"/><path d="M-8 11 q1.5 2 3 0" fill="none" stroke="#2d3436" stroke-width="1"/><path d="M14 20 q12 -4 10 -16" fill="none" stroke="#f39c12" stroke-width="4" stroke-linecap="round"/></g>`
+  }
+};
+const AVSLOT={sukienka:'top',suknia:'top',bluzka:'top',spodnie:'bottom',spodnica:'bottom',kapelusz:'head',czapka:'head',korona:'head',kokarda:'head',kwiatek:'head',okulary:'face',szalik:'neck',korale:'neck',buty:'feet',torba:'hand',balon:'hand',rozdzka:'hand',skrzydla:'back',peleryna:'back',kotek:'pet'};
+const isDress=id=>id==='sukienka'||id==='suknia';
+function avatarSvg(o,size=200,opts={}){
+  o=o||{};const L=[];
+  if(o.back&&AVP.back[o.back])L.push(AVP.back[o.back]);
+  L.push(AVP.hairBack,AVP.legs);
+  L.push(o.feet&&AVP.feet[o.feet]?AVP.feet[o.feet]:AVP.feetBase);
+  if(o.bottom&&AVP.bottom[o.bottom]&&!isDress(o.top))L.push(AVP.bottom[o.bottom]);
+  L.push(AVP.torsoBase);
+  if(o.top&&AVP.top[o.top])L.push(AVP.top[o.top]);
+  L.push(AVP.arms);
+  if(o.neck&&AVP.neck[o.neck])L.push(AVP.neck[o.neck]);
+  L.push(AVP.head,AVP.hairFront);
+  if(o.face&&AVP.face[o.face])L.push(AVP.face[o.face]);
+  if(o.head&&AVP.headwear[o.head])L.push(AVP.headwear[o.head]);
+  if(o.hand&&AVP.hand[o.hand])L.push(AVP.hand[o.hand]);
+  if(o.pet&&AVP.pet[o.pet])L.push(AVP.pet[o.pet]);
+  const h=Math.round(size*1.5);
+  return `<svg viewBox="0 0 200 300" width="${size}" height="${h}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible${opts.style?';'+opts.style:''}">${L.join('')}</svg>`;
+}
+/* podgląd samego dodatku (na kafelku w szafie): postać wyszarzona, dodatek w kolorze */
+function itemPreviewSvg(id,size=80){
+  const slot=AVSLOT[id];const o={};o[slot]=id;if(slot==='bottom')o.top='bluzka';
+  return avatarSvg(o,size);
+}
+if(typeof module!=='undefined')module.exports={avatarSvg,itemPreviewSvg,AVSLOT};

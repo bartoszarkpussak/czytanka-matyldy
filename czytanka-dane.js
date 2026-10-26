@@ -50,6 +50,31 @@ const WORLDS=[
   lesson:'Wielki bal! Tu są dwuznaki: <b>SZ</b>, <b>CZ</b>, <b>RZ</b>, <b>CH</b>, <b>DZ</b>. Dwie litery, jeden dźwięk. Czytasz całe zdania. Zostajesz <b>Mistrzynią Czytania</b>!'}
 ];
 
+/* dodatki do awatara: id, nazwa sylabami, slot, czy jest na start (base) — rysunki w czytanka-awatar.js */
+const ITEMS=[
+ {id:'sukienka',syl:'su-kien-ka',slot:'top',base:true},
+ {id:'suknia',syl:'suk-nia',slot:'top',base:true},
+ {id:'bluzka',syl:'bluz-ka',slot:'top',base:true},
+ {id:'spodnie',syl:'spod-nie',slot:'bottom',base:true},
+ {id:'kapelusz',syl:'ka-pe-lusz',slot:'head',base:true},
+ {id:'czapka',syl:'czap-ka',slot:'head',base:true},
+ /* nagrody, od najkrótszych nazw */
+ {id:'buty',syl:'bu-ty',slot:'feet'},
+ {id:'torba',syl:'tor-ba',slot:'hand'},
+ {id:'balon',syl:'ba-lon',slot:'hand'},
+ {id:'korona',syl:'ko-ro-na',slot:'head'},
+ {id:'szalik',syl:'sza-lik',slot:'neck'},
+ {id:'kotek',syl:'ko-tek',slot:'pet'},
+ {id:'kokarda',syl:'ko-kar-da',slot:'head'},
+ {id:'kwiatek',syl:'kwia-tek',slot:'head'},
+ {id:'korale',syl:'ko-ra-le',slot:'neck'},
+ {id:'okulary',syl:'o-ku-la-ry',slot:'face'},
+ {id:'spodnica',syl:'spód-ni-ca',slot:'bottom'},
+ {id:'rozdzka',syl:'różdż-ka',slot:'hand'},
+ {id:'skrzydla',syl:'skrzy-dła',slot:'back'},
+ {id:'peleryna',syl:'pe-le-ry-na',slot:'back'},
+];
+
 /* stałe zwroty lektorki (kind 'say') */
 const PRAISE=['Brawo!','Super, Matylda!','Świetnie!','Tak jest!','Wspaniale!','Pięknie czytasz!','Jesteś mistrzynią!'];
 const GREETS=['Cześć Matylda! Wybierz świat i zbieraj gwiazdki!','Każda gwiazdka to nowa naklejka do albumu.','Kliknij głośniczek, a przeczytam ci zadanie na głos.','Naciśnij zielony mikrofon i przeczytaj, a posłucham!','Dziś poczytamy jak prawdziwa księżniczka.'];
@@ -59,7 +84,8 @@ const SAY={
   again:'Hmm, spróbuj jeszcze raz.', almost:'Prawie! Posłuchaj, jak łączymy sylaby:', yourTurn:'Teraz ty.', together:'Czytamy razem:', soundsWord:'Tak brzmi to słowo:', soundsSent:'Tak brzmi to zdanie:',
   nothing:'Nic nie usłyszałam. Spróbuj jeszcze raz.', thisIs:'To jest:', thisWord:'To jest:', repeat:'Powtórz:', written:'Tu jest napisane:', sayIt:'Powiedz.',
   bravo:'Brawo, Matylda!', almostEnd:'Prawie!', r3:'Wszystkie gwiazdki! Jesteś mistrzynią czytania!', r2:'Świetnie! Jeszcze trochę i będą trzy gwiazdki.', r1:'Brawo! Masz gwiazdkę. Spróbuj jeszcze raz po więcej!', r0:'Nie szkodzi! Spróbuj jeszcze raz, dasz radę.',
-  hello:'Cześć Matylda! Jestem twoją lektorką. Posłuchaj: ko, ro, na. Korona.'
+  hello:'Cześć Matylda! Jestem twoją lektorką. Posłuchaj: ko, ro, na. Korona.',
+  newGift:'Masz nowy dodatek dla swojej postaci! Ułóż jego nazwę, żeby go odblokować.', buildName:'Ułóż nazwę tego dodatku.', fillVowels:'Wstaw brakujące samogłoski w nazwie tego dodatku.', unlocked:'Brawo! Dodatek odblokowany. Zajrzyj do szafy i ubierz swoją postać.', wardrobe:'To twoja szafa. Dotknij ubranka, żeby je założyć.'
 };
 
 /* ---- katalog nagrań: każda jednostka to {kind, text}; nazwa pliku = kind-fnv(kind|text).m4a ---- */
@@ -84,9 +110,10 @@ function katalogNagran(){
   cons.forEach(c=>VOW.forEach(v=>add('syl',c+v)));
   const words=[...WORLDS.flatMap(w=>w.words.map(x=>x[0])),...Object.values(FIRST).flat().map(x=>x[0]),...FIRST_OTHER.map(x=>x[0])];
   words.forEach(w=>{add('word',w);if(w.includes('-'))add('model',w)});
+  ITEMS.forEach(it=>{add('word',it.syl);if(it.syl.includes('-'))add('model',it.syl)});
   WORLDS.forEach(w=>(w.sent||[]).forEach(s=>add('sent',s)));
   PRAISE.forEach(p=>add('say',p));GREETS.forEach(g=>add('say',g));Object.values(SAY).forEach(s=>add('say',s));
   WORLDS.forEach(w=>add('say',w.lesson.replace(/<[^>]+>/g,'').replace(/-/g,'')));
   return out;
 }
-if(typeof module!=='undefined')module.exports={unitBase,unitBaseOld,LETTERS,VOW,NOSYL,isCons,FIRST,FIRST_OTHER,WORLDS,PRAISE,GREETS,SAY,fnv,unitText,unitFile,katalogNagran};
+if(typeof module!=='undefined')module.exports={unitBase,ITEMS,unitBaseOld,LETTERS,VOW,NOSYL,isCons,FIRST,FIRST_OTHER,WORLDS,PRAISE,GREETS,SAY,fnv,unitText,unitFile,katalogNagran};
