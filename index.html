@@ -114,8 +114,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .opt.badx{background:#ffe4e6;color:#9f1239;animation:shake .4s}
 .opt.dim{opacity:.4}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-.slots{display:flex;justify-content:center;gap:8px;margin:12px 0 4px;min-height:64px;flex-wrap:wrap}
-.slot{min-width:58px;height:62px;border-radius:14px;border:3px dashed #d8b4fe;display:grid;place-items:center;font-size:32px;font-weight:900;padding:0 10px;letter-spacing:1px}
+.slots{display:flex;justify-content:center;gap:6px;margin:12px 0 4px;min-height:64px;flex-wrap:wrap}
+.slot{min-width:46px;height:56px;border-radius:14px;border:3px dashed #d8b4fe;display:grid;place-items:center;font-size:32px;font-weight:900;padding:0 10px;letter-spacing:1px}
 .slot.full{border-style:solid;border-color:#c4b5fd;background:#f5f3ff}
 .tiles{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
 .tile{border:0;border-radius:16px;background:#fff;padding:12px 16px;font-size:34px;font-weight:900;box-shadow:0 6px 0 rgba(0,0,0,.18);letter-spacing:1px;min-width:64px}
@@ -150,6 +150,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .hero button .badge{position:absolute;top:-8px;right:-8px;background:#e11d48;color:#fff;border-radius:999px;font-size:12px;padding:3px 7px;animation:pop .4s}
 .wardrobe{display:grid;grid-template-columns:150px 1fr;gap:12px;margin-top:14px}
 .wardrobe .stage2{background:rgba(255,255,255,.14);border-radius:22px;padding:8px;display:grid;place-items:center}
+.wornname{min-height:44px;margin-top:4px;font-size:30px;font-weight:900;letter-spacing:1.5px;text-align:center;line-height:1.1;animation:pop .35s}
+.wornname .s1{color:#ffd166}.wornname .s2{color:#fff}
+.wornname.sm{font-size:22px}
 .wgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .witem{background:#fff;border-radius:16px;padding:4px 4px 6px;text-align:center;border:3px solid transparent;box-shadow:0 4px 0 rgba(0,0,0,.18);position:relative}
 .witem.on{border-color:var(--gold)}
@@ -187,8 +190,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 <body>
 <div class="sky" id="sky"></div>
 <div id="app"></div>
-<script src="czytanka-dane.js?v=11"></script>
-<script src="czytanka-awatar.js?v=1"></script>
+<script src="czytanka-dane.js?v=12"></script>
+<script src="czytanka-awatar.js?v=2"></script>
 <script>
 /* ================= narzędzia ================= */
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -385,7 +388,7 @@ function lettersUpTo(id){const out=[];for(const w of WORLDS){out.push(...w.lette
 function wordsUpTo(id){const out=[];for(const w of WORLDS){out.push(...w.words);if(w.id===id)break}return out}
 const isLocked=w=>!S.unlockAll&&widx(w.id)>0&&!(S.stars[prevWorld(w.id).id]>0);
 const disp=w=>S.upper?w.toUpperCase():w;
-function sylHtml(w){return w.split('-').map((s,i)=>`<span class="${i%2?'s2':'s1'}">${disp(s)}</span>`).join('')}
+function sylHtml(w){let i=0;return w.split(' ').map(word=>word.split('-').map(s=>`<span class="${(i++)%2?'s2':'s1'}">${disp(s)}</span>`).join('')).join('<span class="gap"> </span>')}
 const praiseE=['🌟','👑','💖','🦄','✨','🎀','🏆'];
 const lessonText=w=>w.lesson.replace(/<[^>]+>/g,'').replace(/-/g,'');
 
@@ -682,8 +685,9 @@ function wear(id){
   const it=itemOf(id);if(!S.wardrobe.includes(id))return;const slot=it.slot;sTap();
   if(S.outfit[slot]===id)S.outfit[slot]=null;else S.outfit[slot]=id;
   if(slot==='top'&&!S.outfit.top)S.outfit.top=null;
-  save();wardrobe(false);speak(U('word',it.syl));
+  lastWorn=id;save();wardrobe(false);speak(U('word',it.syl));
 }
+let lastWorn=null;
 function wardrobe(say=true){
   stopSpeak();
   const slotName={top:'Góra',bottom:'Dół',head:'Na głowę',face:'Okulary',neck:'Na szyję',feet:'Buty',hand:'Do ręki',back:'Na plecy',pet:'Przyjaciel'};
@@ -691,7 +695,7 @@ function wardrobe(say=true){
   const tile=it=>{const on=S.outfit[it.slot]===it.id;return `<div class="witem ${on?'on':''}" onclick="wear('${it.id}')">${itemPreviewSvg(it.id,64)}<div class="nm">${disp(itemName(it.id))}</div></div>`};
   const ltile=it=>`<div class="witem lock" onclick="${S.pendingGift===it.id?'unlockScreen()':'sTap()'}">${S.pendingGift===it.id?'<span class="gift">🎁</span>':''}${itemPreviewSvg(it.id,64)}<div class="nm">${S.pendingGift===it.id?'ułóż nazwę':'🔒'}</div></div>`;
   app.innerHTML=`<div class="home">${topBar()}<div class="logo"><h1>Szafa <span>Matyldy</span></h1><p>Dotknij ubranka, żeby je założyć lub zdjąć.</p></div>
-   <div class="wardrobe"><div class="stage2">${avatarSvg(S.outfit,130)}</div>
+   <div class="wardrobe"><div class="stage2"><div>${avatarSvg(S.outfit,130)}<div class="wornname ${lastWorn&&itemName(lastWorn).length>8?'sm':''}">${lastWorn?sylHtml(itemOf(lastWorn).syl).replace(/<span class="(s[12])">(\S+) <\/span>/g,'<span class="$1">$2</span>&nbsp;'):''}</div></div></div>
    <div><div class="wgrid">${owned.map(tile).join('')}${locked.map(ltile).join('')}</div></div></div>
    <div class="foot">Masz ${owned.length} z ${ITEMS.length} rzeczy. ${locked.length?'Każda misja z gwiazdką ⭐ daje nowy dodatek, a nazwę trzeba ułożyć z liter.':'Masz wszystko! 👑'}</div>
    <button class="bigbtn alt" style="margin-top:12px" onclick="home()">← Wróć na mapę</button></div>`;
@@ -702,18 +706,21 @@ let unl=null;
 function unlockScreen(){
   const id=S.pendingGift;if(!id){home();return}const it=itemOf(id);const name=itemName(id);
   const full=totalStars()>=6;const letters=name.split('');
-  const blanks=letters.map((ch,i)=>full||VOW.includes(ch.toUpperCase())||['Ó','Ą','Ę'].includes(ch.toUpperCase()));
+  const blanks=letters.map((ch,i)=>ch!==' '&&(full||VOW.includes(ch.toUpperCase())||['Ó','Ą','Ę'].includes(ch.toUpperCase())));
   const need=letters.filter((ch,i)=>blanks[i]);
   const distr=shuffle((full?Object.keys(LETTERS):['A','O','E','I','U','Y']).map(l=>l.toLowerCase()).filter(l=>!need.includes(l))).slice(0,2);
   unl={id,name,letters,blanks,full,filled:[],tiles:shuffle([...need,...distr]),busy:false};
   renderUnlock();speak(full?SAY.buildName:SAY.fillVowels,U('word',it.syl));
 }
 function renderUnlock(){
-  const u=unl;const slots=u.letters.map((ch,i)=>{if(!u.blanks[i])return `<div class="slot full" style="border-color:#e9d5ff;background:#faf5ff">${disp(ch)}</div>`;const k=u.blanks.slice(0,i).filter(Boolean).length;const v=u.filled[k];return `<div class="slot ${v?'full':''}" data-k="${k}">${v?disp(v):''}</div>`}).join('');
+  const u=unl;const rows=[[]];u.letters.forEach((ch,i)=>{if(ch===' '){rows.push([]);return}
+    if(!u.blanks[i])rows[rows.length-1].push(`<div class="slot full" style="border-color:#e9d5ff;background:#faf5ff">${disp(ch)}</div>`);
+    else{const k=u.blanks.slice(0,i).filter(Boolean).length;const v=u.filled[k];rows[rows.length-1].push(`<div class="slot ${v?'full':''}" data-k="${k}">${v?disp(v):''}</div>`)}});
+  const slots=rows.map(r=>`<div class="slots" style="margin:4px 0">${r.join('')}</div>`).join('');
   app.innerHTML=`<div class="play"><div class="ptop"><button class="iconbtn" onclick="home()">✕</button><div class="ptitle">🎁 Nowy dodatek</div><div class="pill">${S.wardrobe.length}/${ITEMS.length}</div></div>
    <div class="stage"><div class="q"><div class="ask"><button onclick="speak(unl.full?SAY.buildName:SAY.fillVowels,U('word','${itemOf(u.id).syl}'))">🔊</button><span>${u.full?'Ułóż nazwę dodatku':'Wstaw brakujące samogłoski'}</span></div>
    <div style="display:flex;justify-content:center;margin:6px 0 -8px">${itemPreviewSvg(u.id,110)}</div>
-   <div class="slots" id="slots">${slots}</div>
+   <div id="slots" style="margin-top:10px">${slots}</div>
    <div class="tiles">${u.tiles.map((t,i)=>`<button class="tile ${u.filled.includes('#'+i)?'used':''}" data-i="${i}" onclick="unlockTap(${i},this)">${disp(t)}</button>`).join('')}</div></div></div></div>`;
 }
 async function unlockTap(i,btn){
@@ -723,7 +730,7 @@ async function unlockTap(i,btn){
   if(u.filled.length<need.length)return;
   u.busy=true;
   if(u.filled.join('')===need.join('')){
-    S.wardrobe.push(u.id);S.outfit[itemOf(u.id).slot]=u.id;S.pendingGift=null;save();
+    S.wardrobe.push(u.id);S.outfit[itemOf(u.id).slot]=u.id;S.pendingGift=null;lastWorn=u.id;save();
     sWin();confetti(['👗','✨','⭐','🎀','👑']);fb('Brawo! '+disp(u.name)+' 🎁','ok');
     await speak(SAY.unlocked,U('word',itemOf(u.id).syl));wardrobe(false);
   }else{
@@ -747,7 +754,10 @@ function album(){
 }
 
 /* ================= panel rodzica ================= */
-function parentGate(){const a=prompt('Dla rodzica: ile to 6 × 7?');if(a&&a.trim()==='42')parent();else if(a!==null)toast('To miejsce dla rodzica 🙂')}
+function parentGate(){
+  const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="card"><div style="font-size:34px">👨‍👧</div><p style="margin:8px 0">Dla rodzica: ile to <b>6 × 7</b>?</p><input id="pg" inputmode="numeric" style="font:inherit;font-size:22px;padding:10px;border-radius:12px;border:2px solid #e9d5ff;width:120px;text-align:center"><div class="row2"><button onclick="this.closest('.modal').remove()">Anuluj</button><button onclick="const v=document.getElementById('pg').value.trim();this.closest('.modal').remove();if(v==='42')parent();else toast('To miejsce dla rodzica 🙂')">OK</button></div></div>`;
+  document.body.appendChild(m);const i=m.querySelector('#pg');i.focus();i.onkeydown=e=>{if(e.key==='Enter')m.querySelectorAll('button')[1].click()};
+}
 function parent(){
   const rows=Object.entries(S.words).sort((a,b)=>(b[1].bad-b[1].ok)-(a[1].bad-a[1].ok));
   const trouble=rows.filter(([k,v])=>v.bad>0).slice(0,15);

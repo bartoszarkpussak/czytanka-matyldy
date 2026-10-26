@@ -73,6 +73,13 @@ const ITEMS=[
  {id:'rozdzka',syl:'różdż-ka',slot:'hand'},
  {id:'skrzydla',syl:'skrzy-dła',slot:'back'},
  {id:'peleryna',syl:'pe-le-ry-na',slot:'back'},
+ /* na końcu: suknie księżniczek */
+ {id:'tiara',syl:'tia-ra',slot:'head'},
+ {id:'rozana',syl:'suk-nia ró-ża-na',slot:'top'},
+ {id:'lodowa',syl:'suk-nia lo-do-wa',slot:'top'},
+ {id:'gwiezdna',syl:'suk-nia gwiezd-na',slot:'top'},
+ {id:'syrenki',syl:'suk-nia sy-ren-ki',slot:'top'},
+ {id:'balowa',syl:'suk-nia ba-lo-wa',slot:'top'},
 ];
 
 /* stałe zwroty lektorki (kind 'say') */
@@ -96,7 +103,7 @@ function unitText(kind,text){
   if(kind==='letter'){const [n,ex]=LETTERS[text];return ['Ó','Ą','Ę','Ń'].includes(text)?`Litera ${n}, jak w słowie ${ex}.`:`Litera ${n}, jak ${ex}.`}
   if(kind==='syl'){const t=text.toLowerCase();return `Posłuchaj. Sylaba: ${t}. Jeszcze raz: ${t}.`}
   if(kind==='word')return `Słowo ${plainWord(text)}.`;
-  if(kind==='model'){const p=text.split('-');return p.length>1?`Czytamy sylabami: ${p.map(x=>x.toLowerCase()).join(', ')}. Razem: ${plainWord(text)}.`:`Słowo ${plainWord(text)}.`}
+  if(kind==='model'){const p=text.split(/[- ]/);return p.length>1?`Czytamy sylabami: ${p.map(x=>x.toLowerCase()).join(', ')}. Razem: ${plainWord(text)}.`:`Słowo ${plainWord(text)}.`}
   return text;
 }
 const unitBaseOld=(kind,text)=>`${kind}-${fnv(kind+'|'+text)}`;
