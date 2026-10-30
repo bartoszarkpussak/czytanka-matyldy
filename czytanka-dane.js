@@ -47,7 +47,35 @@ const WORLDS=[
  {id:'w8',emoji:'👑',name:'Bal Księżniczek',tag:'sz, cz, rz, ch, dz i całe zdania',c1:'#fbbf24',c2:'#b45309',letters:[],boss:true,
   words:[['sza-fa',''],['czap-ka','🧢'],['rze-ka',''],['chleb','🍞'],['mysz','🐭'],['księż-nicz-ka','👸'],['wróż-ka','🧚'],['dzwon','🔔'],['chmu-ra','☁️'],['szko-ła','🏫'],['grusz-ka','🍐'],['pszczo-ła','🐝'],['deszcz','🌧️'],['ser-ce','❤️'],['cza-ro-dziej','🧙'],['ry-cerz',''],['su-kien-ka','👗'],['ka-ro-ca',''],['pan-to-fe-lek','🥿']],
   sent:['Księżniczka tańczy na balu.','Wróżka ma różdżkę.','Mysz je ser.','Rycerz ma zamek.','Matylda lubi lody.','Amelia i Matylda tańczą.','Czarodziej ma czapkę.','Pies biega po parku.','Mama czyta bajkę.','Kot pije mleko.'],
-  lesson:'Wielki bal! Tu są dwuznaki: <b>SZ</b>, <b>CZ</b>, <b>RZ</b>, <b>CH</b>, <b>DZ</b>. Dwie litery, jeden dźwięk. Czytasz całe zdania. Zostajesz <b>Mistrzynią Czytania</b>!'}
+  lesson:'Wielki bal! Tu są dwuznaki: <b>SZ</b>, <b>CZ</b>, <b>RZ</b>, <b>CH</b>, <b>DZ</b>. Dwie litery, jeden dźwięk. Czytasz całe zdania. Zostajesz <b>Mistrzynią Czytania</b>!'},
+
+ /* ===== SERIA 2: Kraina Mistrzyni. Każda misja zaczyna się od powtórki tego, co ostatnio było trudne (dziennik pomyłek). ===== */
+ {id:'wx',emoji:'🔁',name:'Trening Matyldy',tag:'to, co było trudne',c1:'#fb7185',c2:'#9f1239',series:2,train:true,letters:[],words:[],sent:[],
+  lesson:'Tu ćwiczymy tylko to, co ostatnio sprawiało <b>kłopot</b>: litery, sylaby i słowa, które się pomyliły. Za każdym razem inny zestaw, zawsze ten, którego najbardziej potrzebujesz.'},
+ {id:'w9',emoji:'🪞',name:'Lustro B, D, P',tag:'bałwan, dynia, pudel',c1:'#60a5fa',c2:'#1e3a8a',series:2,letters:['B','D','P'],confuse:['B','D','P'],
+  words:[['dąb','🌳'],['bo-cian','🦩'],['bę-ben','🥁'],['pu-del','🐩'],['bał-wan','⛄'],['bo-bas','👶'],['dy-nia','🎃'],['bu-dyń','🍮'],['pa-pu-ga','🦜'],['po-dusz-ka','🛏️'],['do-bra',''],['bu-dy-nek','🏢'],['pa-da',''],['dro-ga','🛣️'],['pąk','🌸'],['pud-ło','📦'],['bu-rak','🥬'],['po-bud-ka','⏰']],
+  sent:['Pudel biega po drodze.','Babcia piecze babkę.','Dynia jest duża.','Bobas pije mleko.','Bocian ma długi dziób.','Pada deszcz na dąb.'],
+  lesson:'Litery <b>B</b>, <b>D</b> i <b>P</b> wyglądają jak w lustrze! <b>B</b> ma brzuszek z przodu, <b>D</b> ma brzuszek z tyłu, a <b>P</b> ma brzuszek na górze. Patrz uważnie!'},
+ {id:'w10',emoji:'🎵',name:'Rytm Sylab',tag:'ma-li-na, sa-mo-lot',c1:'#fbbf24',c2:'#92400e',series:2,letters:[],extra:'words',
+  words:[['ma-li-na','🍓'],['ka-na-pa','🛋️'],['pa-ra-sol','☂️'],['te-le-fon','📱'],['sa-mo-lot','✈️'],['la-ta-wiec','🪁'],['cze-ko-la-da','🍫'],['hu-laj-no-ga','🛴'],['ja-go-dy','🫐'],['mo-ty-lek','🦋'],['to-reb-ka','👜'],['ko-ra-li-ki','📿'],['ka-lo-ry-fer',''],['ko-mi-nek',''],['ma-lo-wan-ka','🎨'],['ro-we-rek','🚲'],['po-ma-rań-cza','🍊'],['do-mi-no','🁣']],
+  sent:['Malina jest słodka.','Samolot leci wysoko.','Matylda je czekoladę.','Amelia jedzie na hulajnodze.','Motylek siada na kanapie.','Parasol chroni przed deszczem.'],
+  lesson:'Długie słowa to tylko <b>kilka sylab</b> obok siebie. Klaszcz do każdej: <b>MA-LI-NA</b>, <b>SA-MO-LOT</b>, <b>CZE-KO-LA-DA</b>. Sylaba po sylabie, i gotowe!'},
+ {id:'w11',emoji:'🧩',name:'Zbitki Liter',tag:'kra, pla, sta, gwia',c1:'#34d399',c2:'#065f46',series:2,letters:[],extra:'words',
+  words:[['kra-wat','👔'],['pla-ża','🏖️'],['trak-tor','🚜'],['stół',''],['kwia-ty','💐'],['drze-wo','🌳'],['gwiaz-da','⭐'],['skar-by','💎'],['kla-wisz','🎹'],['sta-tek','🚢'],['krop-ka',''],['pta-szek','🐦'],['słoń-ce','☀️'],['śnieg','❄️'],['grzy-bek','🍄'],['kró-lik','🐰'],['smo-czek','🍼'],['płaszcz','🧥'],['krze-sło','🪑']],
+  sent:['Traktor jedzie przez pole.','Na niebie świeci gwiazda.','Królik skacze po trawie.','Statek płynie po morzu.','Ptaszek śpiewa na drzewie.','Kwiaty stoją na stole.'],
+  lesson:'Czasem dwie lub trzy spółgłoski stoją <b>obok siebie</b>: <b>KR</b>-awat, <b>PL</b>-aża, <b>ST</b>-atek, <b>GW</b>-iazda. Powiedz je razem, szybko, jednym tchem.'},
+ {id:'w12',emoji:'🔤',name:'Dwuznaki',tag:'sz, cz, rz, ch, dz',c1:'#c084fc',c2:'#581c87',series:2,letters:[],digraphs:['SZ','CZ','RZ','CH','DZ'],
+  words:[['szyn-ka','🥓'],['cza-pecz-ka','🧢'],['rze-pa',''],['chmur-ka','☁️'],['dzię-cioł','🐦'],['dżem','🍯'],['niedź-wiedź','🐻'],['szczu-rek','🐀'],['kacz-ka','🦆'],['wie-czór','🌙'],['mo-rze','🌊'],['cho-in-ka','🎄'],['dzwo-nek','🔔'],['czo-ło',''],['szklan-ka','🥛'],['rzę-sy',''],['chus-ta','🧣'],['dziew-czyn-ka','👧'],['dzie-ci','🧒']],
+  sent:['Szczurek je szynkę.','Kaczka pływa po rzece.','Na choince wisi dzwonek.','Dziewczynka ma czapeczkę.','Wieczorem świeci księżyc.','Niedźwiedź śpi w zimie.'],
+  lesson:'Dwie litery, <b>jeden dźwięk</b>: <b>SZ</b> jak szynka, <b>CZ</b> jak czapka, <b>RZ</b> jak rzeka, <b>CH</b> jak chmura, <b>DZ</b> jak dzwonek. Gdy je zobaczysz obok siebie, czytaj je razem.'},
+ {id:'w13',emoji:'❓',name:'Zdania i Pytania',tag:'Gdzie jest mój miś?',c1:'#38bdf8',c2:'#075985',series:2,letters:[],extra:'sent',
+  words:[['książ-ka','📖'],['ciast-ko','🍪'],['jabł-ko','🍎'],['bab-cia','👵'],['dzia-dek','👴'],['ju-tro',''],['dzi-siaj',''],['gdzie',''],['kie-dy',''],['dla-cze-go',''],['pro-szę',''],['dzię-ku-ję',''],['przed-szko-le','🏫'],['u-ro-dzi-ny','🎂'],['pre-zent','🎁'],['ba-sen','🏊'],['mój',''],['czy','']],
+  sent:['Gdzie jest mój miś?','Czy kot lubi mleko?','Kto zjadł moje ciastko?','Matylda czyta książkę.','Jutro idziemy do babci.','Amelia ma dzisiaj urodziny.','Dziękuję za prezent!','Kiedy pójdziemy na basen?','Proszę o jabłko.'],
+  lesson:'Zdanie zaczyna się <b>wielką literą</b>, a kończy kropką albo <b>znakiem zapytania</b>. Gdy widzisz <b>?</b>, głos idzie w górę, jak przy pytaniu: Gdzie jest mój miś?'},
+ {id:'w14',emoji:'📖',name:'Bajka Matyldy',tag:'cała bajka do przeczytania',c1:'#f472b6',c2:'#831843',series:2,boss:true,letters:[],
+  words:[['sios-tra','👧'],['o-gród','🌷'],['łóż-ko','🛏️'],['ra-no','🌅'],['daw-no',''],['bia-ły',''],['zgu-bi-ła',''],['zna-lazł',''],['tań-czy-li',''],['szczęś-li-wie',''],['ko-tek','🐱'],['za-mek','🏰']],
+  sent:['Dawno temu żyła księżniczka Matylda.','Miała siostrę Amelię i białego kotka.','Pewnego dnia zgubiła swoją koronę.','Szukała jej w zamku i w ogrodzie.','Kotek znalazł koronę pod łóżkiem.','Matylda zrobiła wielki bal.','Amelia grała na gitarze.','Wszyscy tańczyli do rana.','I żyły długo i szczęśliwie.'],
+  lesson:'To jest <b>twoja bajka</b>. Czytasz ją zdanie po zdaniu, w trzech misjach, od początku do końca. Na końcu bajki czeka największa nagroda.'}
 ];
 
 /* dodatki do awatara: id, nazwa sylabami, slot, czy jest na start (base) — rysunki w czytanka-awatar.js */
@@ -80,11 +108,24 @@ const ITEMS=[
  {id:'gwiezdna',syl:'suk-nia gwiezd-na',slot:'top'},
  {id:'syrenki',syl:'suk-nia sy-ren-ki',slot:'top'},
  {id:'balowa',syl:'suk-nia ba-lo-wa',slot:'top'},
+ /* seria 2 */
+ {id:'lizak',syl:'li-zak',slot:'hand'},
+ {id:'spinka',syl:'spin-ka',slot:'head'},
+ {id:'maska',syl:'mas-ka',slot:'face'},
+ {id:'wianek',syl:'wia-nek',slot:'head'},
+ {id:'plecak',syl:'ple-cak',slot:'back'},
+ {id:'baletki',syl:'ba-let-ki',slot:'feet'},
+ {id:'kozaki',syl:'ko-za-ki',slot:'feet'},
+ {id:'motylek',syl:'mo-ty-lek',slot:'pet'},
+ {id:'parasolka',syl:'pa-ra-sol-ka',slot:'hand'},
+ {id:'jednorozec',syl:'jed-no-ro-żec',slot:'pet'},
+ {id:'teczowa',syl:'suk-nia tę-czo-wa',slot:'top'},
+ {id:'krolowej',syl:'suk-nia kró-lo-wej',slot:'top'},
 ];
 
 /* stałe zwroty lektorki (kind 'say') */
 const PRAISE=['Brawo!','Super, Matylda!','Świetnie!','Tak jest!','Wspaniale!','Pięknie czytasz!','Jesteś mistrzynią!'];
-const GREETS=['Cześć Matylda! Wybierz świat i zbieraj gwiazdki!','Każda gwiazdka to nowa naklejka do albumu.','Kliknij głośniczek, a przeczytam ci zadanie na głos.','Naciśnij zielony mikrofon i przeczytaj, a posłucham!','Dziś poczytamy jak prawdziwa księżniczka.'];
+const GREETS=['Cześć Matylda! Wybierz świat i zbieraj gwiazdki!','Każda gwiazdka to nowa naklejka do albumu.','Kliknij głośniczek, a przeczytam ci zadanie na głos.','Naciśnij zielony mikrofon i przeczytaj, a posłucham!','Dziś poczytamy jak prawdziwa księżniczka.','W serii drugiej czekają nowe światy, bajka i nowe ubranka!'];
 const SAY={
   findLetter:'Gdzie jest ta litera?', readLetter:'Jaka to litera? Powiedz głośno.', firstSoundA:'Które słowo zaczyna się na a?', firstSoundO:'Które słowo zaczyna się na o?', firstSoundE:'Które słowo zaczyna się na e?', firstSoundI:'Które słowo zaczyna się na i?', firstSoundU:'Które słowo zaczyna się na u?',
   findSyllable:'Znajdź sylabę, którą mówię.', pictureWord:'Przeczytaj słowa i znajdź to, które pasuje do obrazka.', findWord:'Znajdź słowo, które mówię.', buildWord:'Ułóż to słowo z klocków.', readWord:'Przeczytaj to słowo.', readSentence:'Przeczytaj całe zdanie.',
@@ -92,7 +133,8 @@ const SAY={
   nothing:'Nic nie usłyszałam. Spróbuj jeszcze raz.', thisIs:'To jest:', thisWord:'To jest:', repeat:'Powtórz:', written:'Tu jest napisane:', sayIt:'Powiedz.',
   bravo:'Brawo, Matylda!', almostEnd:'Prawie!', r3:'Wszystkie gwiazdki! Jesteś mistrzynią czytania!', r2:'Świetnie! Jeszcze trochę i będą trzy gwiazdki.', r1:'Brawo! Masz gwiazdkę. Spróbuj jeszcze raz po więcej!', r0:'Nie szkodzi! Spróbuj jeszcze raz, dasz radę.',
   hello:'Cześć Matylda! Jestem twoją lektorką. Posłuchaj: ko, ro, na. Korona.',
-  newGift:'Masz nowy dodatek dla swojej postaci! Ułóż jego nazwę, żeby go odblokować.', buildName:'Ułóż nazwę tego dodatku.', fillVowels:'Wstaw brakujące samogłoski w nazwie tego dodatku.', unlocked:'Brawo! Dodatek odblokowany. Zajrzyj do szafy i ubierz swoją postać.', wardrobe:'To twoja szafa. Dotknij ubranka, żeby je założyć.'
+  newGift:'Masz nowy dodatek dla swojej postaci! Ułóż jego nazwę, żeby go odblokować.', buildName:'Ułóż nazwę tego dodatku.', fillVowels:'Wstaw brakujące samogłoski w nazwie tego dodatku.', unlocked:'Brawo! Dodatek odblokowany. Zajrzyj do szafy i ubierz swoją postać.', wardrobe:'To twoja szafa. Dotknij ubranka, żeby je założyć.',
+  train:'Trening! Ćwiczymy to, co ostatnio było trudne. Dasz radę, Matylda!', review:'Powtórka. To już znasz, spróbuj jeszcze raz.', storyNext:'Czytaj dalej bajkę.', series2:'Seria druga! Nowe światy, dłuższe słowa i cała bajka do przeczytania.'
 };
 
 /* ---- katalog nagrań: każda jednostka to {kind, text}; nazwa pliku = kind-fnv(kind|text).m4a ---- */
@@ -115,6 +157,7 @@ function katalogNagran(){
   Object.keys(LETTERS).forEach(l=>add('letter',l));
   const cons=[...new Set(WORLDS.flatMap(w=>w.letters).filter(isCons))];
   cons.forEach(c=>VOW.forEach(v=>add('syl',c+v)));
+  WORLDS.filter(w=>w.digraphs).forEach(w=>w.digraphs.forEach(d=>VOW.forEach(v=>add('syl',d+v))));
   const words=[...WORLDS.flatMap(w=>w.words.map(x=>x[0])),...Object.values(FIRST).flat().map(x=>x[0]),...FIRST_OTHER.map(x=>x[0])];
   words.forEach(w=>{add('word',w);if(w.includes('-'))add('model',w)});
   ITEMS.forEach(it=>{add('word',it.syl);if(it.syl.includes('-'))add('model',it.syl)});

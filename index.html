@@ -56,6 +56,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wcard.boss{grid-column:1/-1;display:flex;align-items:center;gap:14px}
 .wcard.boss .we{font-size:50px}
 .wcard.locked{filter:saturate(.35) brightness(.8)}
+.wcard.wide{grid-column:1/-1;display:flex;align-items:center;gap:14px}
+.wcard.wide .we{font-size:44px}
+.sh{color:#fff;font-size:22px;font-weight:900;margin:24px 0 -2px;text-align:center;text-shadow:0 2px 0 rgba(0,0,0,.2)}
+.sh small{display:block;font-size:13px;font-weight:700;opacity:.9;margin-top:2px}
+.rev{display:inline-block;background:#fde68a;color:#78350f;border-radius:999px;font-size:12px;font-weight:900;padding:3px 8px;margin-left:6px;vertical-align:middle}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{background:#fff;color:var(--ink);border-radius:999px;padding:6px 10px;font-weight:900;font-size:14px;box-shadow:0 3px 0 rgba(0,0,0,.15)}
 .wcard .lock{position:absolute;right:12px;top:10px;font-size:20px}
 .foot{color:#fff;opacity:.85;text-align:center;font-size:12.5px;font-weight:700;margin-top:18px;line-height:1.5}
 .parentbtn{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:8px 14px;font-weight:800;font-size:13px;margin-top:8px}
@@ -190,8 +197,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 <body>
 <div class="sky" id="sky"></div>
 <div id="app"></div>
-<script src="czytanka-dane.js?v=12"></script>
-<script src="czytanka-awatar.js?v=2"></script>
+<script src="czytanka-dane.js?v=13"></script>
+<script src="czytanka-awatar.js?v=3"></script>
 <script>
 /* ================= narzędzia ================= */
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -386,7 +393,10 @@ const widx=id=>WORLDS.findIndex(w=>w.id===id);
 const prevWorld=id=>WORLDS[widx(id)-1];
 function lettersUpTo(id){const out=[];for(const w of WORLDS){out.push(...w.letters);if(w.id===id)break}return out}
 function wordsUpTo(id){const out=[];for(const w of WORLDS){out.push(...w.words);if(w.id===id)break}return out}
-const isLocked=w=>!S.unlockAll&&widx(w.id)>0&&!(S.stars[prevWorld(w.id).id]>0);
+const totalBad=()=>Object.values(S.words).reduce((a,v)=>a+v.bad,0);
+const series2Open=()=>S.unlockAll||S.stars.w8>0;
+function isLocked(w){if(S.unlockAll)return false;if(w.train)return totalBad()<5&&!(S.stars.w8>0);const i=widx(w.id);if(i===0)return false;const p=WORLDS[i-1];return p.train?!series2Open():!(S.stars[p.id]>0)}
+function lockMsg(w){if(w.train)return '🔁 Trening otworzy się po kilku misjach';const p=prevWorld(w.id);return p.train?'🔒 Zdobądź gwiazdkę na Balu Księżniczek':`🔒 Zdobądź gwiazdkę w świecie „${p.name}”`}
 const disp=w=>S.upper?w.toUpperCase():w;
 function sylHtml(w){let i=0;return w.split(' ').map(word=>word.split('-').map(s=>`<span class="${(i++)%2?'s2':'s1'}">${disp(s)}</span>`).join('')).join('<span class="gap"> </span>')}
 const praiseE=['🌟','👑','💖','🦄','✨','🎀','🏆'];
@@ -411,15 +421,16 @@ function home(){
    <div class="logo"><h1>Czytanka <span>Matyldy</span></h1><p>Królestwo Liter — czytaj i zbieraj gwiazdki!</p></div>
    <div class="bubble"><div class="m">🧚</div><div>${g}</div><button class="say" onclick="speak(GREETS[${gi}])">🔊</button></div>
    <div class="hero"><div class="fig">${avatarSvg(S.outfit,70)}</div><div class="txt">${S.pendingGift?'🎁 Masz <b>nowy dodatek</b>! Ułóż jego nazwę, żeby go odblokować.':`Masz <b>${S.wardrobe.length}</b> ${S.wardrobe.length===1?'rzecz':S.wardrobe.length<5?'rzeczy':'rzeczy'} w szafie. Każda misja z gwiazdką to nowy dodatek.`}</div><button onclick="${S.pendingGift?'unlockScreen()':'wardrobe()'}">${S.pendingGift?'🎁 Odbierz':'👗 Szafa'}${S.pendingGift?'<span class="badge">1</span>':''}</button></div>
-   <div class="worlds">${WORLDS.map(w=>{const lock=isLocked(w);
-     return `<button class="wcard ${w.boss?'boss':''} ${lock?'locked':''}" style="--wc:${w.c1};--wc2:${w.c2}" onclick="openWorld('${w.id}')">
-      <div class="we">${w.emoji}</div><div><div class="wn">${w.name}</div><div class="wt">${w.tag}</div><div class="wst">${starStr(S.stars[w.id]||0)}</div></div>${lock?'<span class="lock">🔒</span>':''}</button>`}).join('')}</div>
+   ${(()=>{const card=w=>{const lock=isLocked(w);return `<button class="wcard ${w.boss||w.train?'boss':''} ${lock?'locked':''}" style="--wc:${w.c1};--wc2:${w.c2}" onclick="openWorld('${w.id}')">
+      <div class="we">${w.emoji}</div><div><div class="wn">${w.name}</div><div class="wt">${w.train?(weakKeys().length?`${weakKeys().length} ${weakKeys().length===1?'rzecz':weakKeys().length<5?'rzeczy':'rzeczy'} do poćwiczenia`:w.tag):w.tag}</div><div class="wst">${starStr(S.stars[w.id]||0)}</div></div>${lock?'<span class="lock">🔒</span>':''}</button>`};
+     const s1=WORLDS.filter(w=>!w.series),s2=WORLDS.filter(w=>w.series===2);
+     return `<div class="worlds">${s1.map(card).join('')}</div><h2 class="sh">✨ Seria 2: Kraina Mistrzyni<small>${series2Open()?'Nowe światy, bajka i nowe ubranka':'Otworzy się po gwiazdce na Balu Księżniczek'}</small></h2><div class="worlds">${s2.map(card).join('')}</div>`})()}
    <div class="foot">Zadania zrobione: ${S.solved} 💪<br>${HAS_SR?'🎤 Mikrofon działa: Matylda może czytać na głos.':'🎤 Ta przeglądarka nie słucha — rodzic ocenia czytanie przyciskami.'}
    <br><button class="parentbtn" onclick="parentGate()">👨‍👧 Dla rodzica</button></div></div>`;
 }
 function openWorld(id){
   const w=W(id);
-  if(isLocked(w)){sBad();toast(`🔒 Zdobądź gwiazdkę w świecie „${prevWorld(id).name}”`);return}
+  if(isLocked(w)){sBad();toast(lockMsg(w));return}
   sTap();
   const letters=w.letters.map(l=>`<button onclick="sTap();speak(U('letter','${l}'))">${disp(l)}</button>`).join('');
   const words=w.words.slice(0,10).map(([s])=>`<button onclick="sTap();speak(U('${s.includes('-')?'model':'word'}','${s}'))">${disp(plain(s))}</button>`).join('');
@@ -427,8 +438,9 @@ function openWorld(id){
    <div class="lhead"><div class="we">${w.emoji}</div><h2>${w.name}</h2><p>${w.tag}</p></div>
    <div class="card lcard"><h3>Zanim zaczniesz 🧚 <button class="say" style="border:0;background:#fdf2f8;border-radius:10px;padding:4px 8px" onclick="speak(lessonText(W('${id}')))">🔊</button></h3><div>${w.lesson}</div>
    ${letters?`<h3 style="margin-top:14px">Dotknij litery, żeby ją usłyszeć</h3><div class="letrow">${letters}</div>`:''}
-   ${words?`<h3 style="margin-top:14px">Dotknij słowa, żeby je usłyszeć</h3><div class="wordrow">${words}</div>`:''}</div>
-   <button class="bigbtn" onclick="startRun('${id}')">Start! 🚀 <small style="font-weight:800;opacity:.75">zestaw ${setOf(id)+1} z ${SETS}</small></button></div>`;
+   ${words?`<h3 style="margin-top:14px">Dotknij słowa, żeby je usłyszeć</h3><div class="wordrow">${words}</div>`:''}
+   ${w.train?`<h3 style="margin-top:14px">Dziś ćwiczymy</h3><div class="chips">${weakKeys().slice(0,8).map(k=>`<span>${disp(k.replace(/^(litera|sylaba|głoska) /,''))}</span>`).join('')||'<span>Wszystko idzie dobrze 🙂</span>'}</div>`:''}</div>
+   <button class="bigbtn" onclick="startRun('${id}')">Start! 🚀 ${w.train?'':`<small style="font-weight:800;opacity:.75">zestaw ${setOf(id)+1} z ${SETS}</small>`}</button></div>`;
   scrollTo(0,0);
 }
 
@@ -451,6 +463,32 @@ function genTasks(w,k=setOf(w.id)){
     fs.slice(0,2).forEach(v=>tasks.push(GEN.firstSound(w,v,Math.floor(rnd()*3))));
     return sshuffle(tasks,rnd);
   }
+  if(w.train)return trainingTasks(8,rnd,true);
+  if(w.series===2){
+    const tasks=trainingTasks(2,rnd,false);
+    const words=chunk(w.words.map(x=>x[0]),k,w,'slowa');const pool=words.length>=5?words:words.concat(w.words.map(x=>x[0]));
+    const wp=pool.filter(x=>w.words.find(y=>y[0]===x)[1]);
+    const used=new Set();const take=(arr)=>{const v=arr.find(x=>!used.has(x))||pool[0];used.add(v);return v};
+    if(w.boss){ /* bajka: zdania po kolei, zestaw k = kolejny fragment */
+      tasks.push(GEN.findWord(w,take(pool)),GEN.buildWord(w,take(pool)));
+      const out=sshuffle(tasks,rnd);const per=Math.ceil(w.sent.length/SETS);
+      w.sent.slice(k*per,k*per+per).forEach((z,i)=>{const t=GEN.readSentence(w,z);if(i||k){t.say=[SAY.storyNext];t.ask='Czytaj dalej bajkę'}out.push(t)});
+      return out;
+    }
+    if(w.letters.length){
+      const q=[];const base=sshuffle(w.letters,wrnd(w,'litery'));while(q.length<3*SETS)q.push(...base);
+      const slots=q.slice(3*k,3*k+3);let syl=false;
+      slots.forEach(l=>{if(!syl&&isCons(l)){syl=true;tasks.push(GEN.findSyllable(w,l,VOW[Math.floor(rnd()*VOW.length)]))}else tasks.push(GEN.findLetter(w,l))});
+    }else if(w.digraphs){
+      chunk(w.digraphs,k,w,'dwuznaki').slice(0,2).forEach(d=>tasks.push(GEN.findSyllable(w,d,['A','O','E','U'][Math.floor(rnd()*4)])));
+    }
+    tasks.push(GEN.pictureWord(w,take(wp)),GEN.findWord(w,take(pool)),GEN.buildWord(w,take(pool.filter(x=>x.includes('-')).concat(pool))),GEN.readWord(w,take(pool)));
+    const sents=chunk(w.sent,k,w,'zdania');
+    tasks.push(GEN.readSentence(w,sents[0]));
+    if(w.extra==='words')tasks.push(GEN.buildWord(w,take(pool.filter(x=>x.includes('-')).concat(pool))),GEN.readWord(w,take(pool)));
+    if(w.extra==='sent'&&sents[1])tasks.push(GEN.readSentence(w,sents[1]));
+    return sshuffle(tasks,rnd);
+  }
   if(w.boss){
     const words=chunk(w.words.map(x=>x[0]),k,w,'slowa'),sents=chunk(w.sent,k,w,'zdania');
     const pool=words.concat(w.words.map(x=>x[0]));const wp=pool.filter(x=>w.words.find(y=>y[0]===x)[1]);
@@ -471,9 +509,38 @@ function genTasks(w,k=setOf(w.id)){
   tasks.push(sents.length&&k!==1?GEN.readSentence(w,sents[0]):GEN.readWord(w,take(pool)));
   return sshuffle(tasks,rnd);
 }
+/* ---- trening z dziennika pomyłek: klucze z S.words (litera X / sylaba xx / głoska X / słowo / zdanie) ---- */
+function weakKeys(){
+  const rec={};(S.log||[]).slice(-120).forEach(e=>{if(!e.ok)rec[e.k]=(rec[e.k]||0)+1});
+  return Object.entries(S.words).map(([k,v])=>({k,s:v.bad*2-v.ok+(rec[k]||0)*2})).filter(x=>S.words[x.k].bad>0&&x.s>0).sort((a,b)=>b.s-a.s).map(x=>x.k);
+}
+const worldOfLetter=l=>WORLDS.find(w=>w.letters.includes(l))||WORLDS[0];
+function wordEntry(pl){for(const w of WORLDS){const e=w.words.find(x=>plain(x[0])===pl);if(e)return {w,e}}return null}
+function taskForKey(k,rnd){
+  const r=()=>rnd?rnd():Math.random();
+  try{
+    if(k.startsWith('litera ')){const l=k.slice(7);if(!LETTERS[l])return null;const w=worldOfLetter(l);return r()<.5?GEN.findLetter(w,l):GEN.readLetter(w,l)}
+    if(k.startsWith('głoska ')){const v=k.slice(7);return FIRST[v]?GEN.firstSound(W('w1'),v):null}
+    if(k.startsWith('sylaba ')){const t=k.slice(7).toUpperCase();const v=t.slice(-1),c=t.slice(0,-1);const w=WORLDS.find(x=>x.letters.includes(c)||(x.digraphs||[]).includes(c));return w?GEN.findSyllable(w,c,v):null}
+    if(/[ .?!]/.test(k)){const w=WORLDS.find(x=>(x.sent||[]).includes(k));return w?GEN.readSentence(w,k):null}
+    const we=wordEntry(k);if(!we)return null;const {w,e}=we;
+    const kinds=[GEN.findWord,GEN.buildWord,GEN.readWord];if(e[1])kinds.push(GEN.pictureWord);
+    return kinds[Math.floor(r()*kinds.length)](w,e[0]);
+  }catch(err){return null}
+}
+function trainingTasks(n,rnd,fill){
+  const out=[];
+  for(const k of weakKeys()){if(out.length>=n)break;const t=taskForKey(k,rnd);if(t){t.review=true;out.push(t)}}
+  if(fill){ /* dopełnij zadaniami ze światów z najmniejszą liczbą gwiazdek */
+    const ws=WORLDS.filter(w=>!w.train&&!isLocked(w)).sort((a,b)=>(S.stars[a.id]||0)-(S.stars[b.id]||0));
+    let guard=0;
+    while(out.length<n&&ws.length&&guard++<60){const w=ws[Math.floor(Math.random()*Math.min(3,ws.length))];const pool=genTasks(w,Math.floor(Math.random()*SETS));const t=pool[Math.floor(Math.random()*pool.length)];if(t&&!out.some(x=>x.key===t.key))out.push(t)}
+  }
+  return out;
+}
 const GEN={
   findLetter(w,t){
-    t=t||pick(w.letters.length?w.letters:lettersUpTo(w.id));const all=lettersUpTo(w.id).filter(l=>l!==t);
+    t=t||pick(w.letters.length?w.letters:lettersUpTo(w.id));const all=(w.confuse||lettersUpTo(w.id)).filter(l=>l!==t);
     const opts=shuffle([t,...shuffle(all).slice(0,2)]);
     return {type:'findLetter',say:[SAY.findLetter,U('letter',t)],ask:`Gdzie jest litera ${disp(t)}?`,opts,answer:t,key:'litera '+t,reveal:[SAY.thisIs,U('letter',t)]};
   },
@@ -492,7 +559,7 @@ const GEN={
     cons=cons||pick(w.letters.filter(isCons))||'M';
     vow=vow||pick(VOW);const t=cons+vow;
     const d1=cons+pick(VOW.filter(v=>v!==vow));
-    const c2=pick(lettersUpTo(w.id).filter(l=>isCons(l)&&l!==cons))||'T';
+    const c2=pick((w.digraphs||w.confuse||lettersUpTo(w.id)).filter(l=>isCons(l)&&l!==cons))||'T';
     const opts=shuffle([t,d1,c2+vow]);
     return {type:'findSyllable',say:[SAY.findSyllable,U('syl',t)],ask:'Znajdź sylabę, którą mówię',opts,answer:t,key:'sylaba '+t.toLowerCase(),reveal:[SAY.thisIs,U('syl',t)]};
   },
@@ -538,7 +605,7 @@ function track(){
 function renderTask(){
   const t=run.tasks[run.i];const w=run.w;run.tries=0;run.hinted=false;run.busy=false;
   let body='';
-  const askRow=`<div class="ask"><button onclick="speak(...run.tasks[run.i].say)">🔊</button><span>${t.ask}</span></div>`;
+  const askRow=`<div class="ask"><button onclick="speak(...run.tasks[run.i].say)">🔊</button><span>${t.ask}${t.review?'<span class="rev">🔁 powtórka</span>':''}</span></div>`;
   if(t.type==='findLetter'||t.type==='findSyllable'){
     body=`<div class="q">${askRow}<div class="opts">${t.opts.map(o=>`<button class="opt" data-v="${o}" onclick="choose('${o}',this)">${disp(o)}</button>`).join('')}</div></div>`;
   }else if(t.type==='firstSound'){
@@ -558,10 +625,10 @@ function renderTask(){
       <div class="row2"><button onclick="hint()">🔊 Posłuchaj</button></div></div>
       <div class="parentrow">👨‍👧 Rodzic: <button onclick="parentOk(true)">✅ Dobrze</button><button onclick="parentOk(false)">❌ Dalej</button></div>`;
   }
-  app.innerHTML=`<div class="play" style="--wc:${w.c1};--wc2:${w.c2}"><div class="ptop"><button class="iconbtn" onclick="home()">✕</button><div class="ptitle">${w.emoji} ${w.name}</div><div class="pill" title="Zestaw ćwiczeń">Z${run.set+1}</div><div class="pill">${run.i+1}/${run.tasks.length}</div></div>
+  app.innerHTML=`<div class="play" style="--wc:${w.c1};--wc2:${w.c2}"><div class="ptop"><button class="iconbtn" onclick="home()">✕</button><div class="ptitle">${w.emoji} ${w.name}</div><div class="pill" title="Zestaw ćwiczeń">${w.train?'🔁':'Z'+(run.set+1)}</div><div class="pill">${run.i+1}/${run.tasks.length}</div></div>
     ${track()}<div class="stage">${body}</div></div>`;
   scrollTo(0,0);
-  speak(...t.say);
+  speak(...(run.i===0&&w.train?[SAY.train]:[]),...t.say);
 }
 function logWord(key,ok){const r=S.words[key]||(S.words[key]={ok:0,bad:0});ok?r.ok++:r.bad++;S.log.push({d:Date.now(),k:key,ok});if(S.log.length>400)S.log.shift();save()}
 
@@ -705,7 +772,7 @@ function wardrobe(say=true){
 let unl=null;
 function unlockScreen(){
   const id=S.pendingGift;if(!id){home();return}const it=itemOf(id);const name=itemName(id);
-  const full=totalStars()>=6;const letters=name.split('');
+  const full=totalStars()>=6&&name.replace(/ /g,'').length<=8;const letters=name.split('');
   const blanks=letters.map((ch,i)=>ch!==' '&&(full||VOW.includes(ch.toUpperCase())||['Ó','Ą','Ę'].includes(ch.toUpperCase())));
   const need=letters.filter((ch,i)=>blanks[i]);
   const distr=shuffle((full?Object.keys(LETTERS):['A','O','E','I','U','Y']).map(l=>l.toLowerCase()).filter(l=>!need.includes(l))).slice(0,2);
@@ -783,9 +850,20 @@ function parent(){
    <h3 style="margin-top:12px">Litery</h3><div class="tog"><button class="${S.upper?'on':''}" onclick="S.upper=true;save();parent()">DUŻE</button><button class="${!S.upper?'on':''}" onclick="S.upper=false;save();parent()">małe</button></div>
    <div class="tog"><button class="${S.unlockAll?'on':''}" onclick="S.unlockAll=!S.unlockAll;save();parent()">${S.unlockAll?'🔓 Wszystkie światy otwarte':'🔒 Światy po kolei'}</button></div>
    <h3 style="margin-top:12px">Postępy</h3>Zadań zrobionych: <b>${S.solved}</b> · gwiazdek: <b>${totalStars()}</b> z ${WORLDS.length*3}
+   <table>${WORLDS.map(w=>`<tr><td>${w.emoji} ${w.name}</td><td>${'⭐'.repeat(S.stars[w.id]||0)||'–'} <small>(misji: ${S.runs[w.id]||0})</small></td></tr>`).join('')}</table>
+   <div class="row2"><button onclick="shareReport()">📤 Wyślij raport</button><button onclick="copyReport()">📋 Kopiuj raport</button></div>
    ${trouble.length?`<h3 style="margin-top:12px">Do poćwiczenia</h3><table>${trouble.map(([k,v])=>`<tr><td>${k}</td><td><span class="ok">${v.ok}✓</span> <span class="bad">${v.bad}✗</span></td></tr>`).join('')}</table>`:'<p>Jeszcze nic trudnego 🙂</p>'}
    <div class="row2"><button onclick="if(confirm('Na pewno wyzerować wszystkie postępy Matyldy?')){localStorage.removeItem(KEY);location.reload()}">🗑️ Wyzeruj</button><button onclick="home()">← Mapa</button></div></div></div>`;
 }
+function reportText(){
+  const L=[`Czytanka Matyldy – raport ${new Date().toLocaleDateString('pl-PL')}`,`Zadań: ${S.solved}, gwiazdek: ${totalStars()}, rzeczy w szafie: ${S.wardrobe.length}`];
+  WORLDS.forEach(w=>L.push(`${w.name}: ${'⭐'.repeat(S.stars[w.id]||0)||'–'} (misji: ${S.runs[w.id]||0})`));
+  const rows=Object.entries(S.words).filter(([k,v])=>v.bad>0).sort((a,b)=>(b[1].bad-b[1].ok)-(a[1].bad-a[1].ok)).slice(0,30);
+  L.push(rows.length?'Najtrudniejsze (✓ dobrze / ✗ źle):':'Bez pomyłek.');rows.forEach(([k,v])=>L.push(`  ${k}: ${v.ok}✓ ${v.bad}✗`));
+  return L.join('\n');
+}
+async function copyReport(){try{await navigator.clipboard.writeText(reportText());toast('Raport skopiowany')}catch(e){const m=document.createElement('div');m.className='modal';m.innerHTML=`<div class="card"><p><b>Raport</b> (zaznacz i skopiuj)</p><textarea style="width:100%;height:220px;font:13px/1.4 monospace">${reportText().replace(/</g,'&lt;')}</textarea><div class="row2"><button onclick="this.closest('.modal').remove()">Zamknij</button></div></div>`;document.body.appendChild(m)}}
+async function shareReport(){const text=reportText();if(navigator.share){try{await navigator.share({title:'Czytanka Matyldy',text})}catch(e){}}else copyReport()}
 async function loadElevenVoices(){
   const key=$('ttskey').value.trim();if(!key){toast('Najpierw wklej klucz');return}
   const box=$('voices');box.textContent='Pobieram…';
